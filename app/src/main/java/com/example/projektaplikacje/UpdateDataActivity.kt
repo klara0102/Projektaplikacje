@@ -1,5 +1,7 @@
 package com.example.projektaplikacje
-
+import com.example.projektaplikacje.firebasee.User
+import com.example.projektaplikacje.firebasee.FirestoreClass
+import com.google.firebase.auth.FirebaseAuth
 import android.net.Uri
 import android.os.Bundle
 import android.widget.Button
@@ -9,6 +11,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
+import com.bumptech.glide.Glide
 
 /**
  * Activity to update user data in the Firestore database.
@@ -31,7 +34,7 @@ class UpdateDataActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_update_data)
+        setContentView(R.layout.activity_update_date)
 
         // Initialize UI components
         initializeUI()
@@ -108,10 +111,10 @@ class UpdateDataActivity : AppCompatActivity() {
         if (user.profilePictureUrl.isNotEmpty()) {
             Glide.with(this)
                 .load(Uri.parse(user.profilePictureUrl))
-                .placeholder(R.drawable.ball) // Placeholder while the image loads
+                .placeholder(R.drawable.obrazpng) // Placeholder while the image loads
                 .into(profileImageView)
         } else {
-            profileImageView.setImageResource(R.drawable.ball) // Default image if no profile picture is set
+            profileImageView.setImageResource(R.drawable.obrazpng) // Default image if no profile picture is set
         }
     }
 

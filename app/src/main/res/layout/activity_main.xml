@@ -28,7 +28,7 @@
         android:layout_marginTop="16dp"
         android:contentDescription="Profile Picture"
         android:scaleType="centerCrop"
-        android:src="@drawable/ball"
+        android:src="@drawable/obrazpng"
         app:layout_constraintTop_toBottomOf="@id/welcomeText"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />

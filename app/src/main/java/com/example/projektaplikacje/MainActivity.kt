@@ -1,5 +1,7 @@
 package com.example.projektaplikacje
-
+import com.example.projektaplikacje.firebasee.User
+import com.example.projektaplikacje.firebasee.FirestoreClass
+import com.google.firebase.auth.FirebaseAuth
 import android.app.DatePickerDialog
 import android.content.Intent
 import android.net.Uri
@@ -14,7 +16,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
 import java.util.Calendar
-
+import com.bumptech.glide.Glide
 /**
  * The main activity of the app where user information is displayed and managed.
  */
@@ -206,10 +208,10 @@ class MainActivity : AppCompatActivity() {
             if (user.profilePictureUrl.isNotEmpty()) {
                 Glide.with(this)
                     .load(Uri.parse(user.profilePictureUrl))
-                    .placeholder(R.drawable.ball) // Placeholder image
+                    .placeholder(R.drawable.obrazpng) // Placeholder image
                     .into(profileImageView)
             } else {
-                profileImageView.setImageResource(R.drawable.ball) // Default image
+                profileImageView.setImageResource(R.drawable.obrazpng) // Default image
             }
         } catch (e: Exception) {
             Toast.makeText(this, "Error displaying user data.", Toast.LENGTH_SHORT).show()
