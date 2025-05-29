@@ -45,7 +45,8 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
     implementation("com.google.firebase:firebase-firestore:24.10.0")
     implementation ("com.google.firebase:firebase-auth:22.3.0")
-
+    implementation ("com.github.bumptech.glide:glide:4.16.0")
+    annotationProcessor ("com.github.bumptech.glide:compiler:4.16.0")
 }
 
 apply(plugin = "com.google.gms.google-services")
