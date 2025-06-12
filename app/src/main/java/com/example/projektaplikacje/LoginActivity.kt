@@ -7,7 +7,7 @@ import android.widget.Button
 import android.widget.EditText
 
 /**
- * Activity responsible for handling user login using Firebase Authentication.
+ * Aktywność odpowiedzialna za logowanie użytkownika przy użyciu Firebase Authentication.
  */
 class LoginActivity : BaseActivity(), View.OnClickListener {
 
@@ -19,17 +19,17 @@ class LoginActivity : BaseActivity(), View.OnClickListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
-        // Initialize input fields and login button
+        // Inicjalizacja pól do wpisywania oraz przycisku logowania
         inputEmail = findViewById(R.id.inputEmail)
         inputPassword = findViewById(R.id.inputPassword)
         loginButton = findViewById(R.id.loginButton)
 
-        // Set click listener for the login button
+        // Ustawienie nasłuchiwania kliknięcia na przycisk logowania
         loginButton?.setOnClickListener {
             logInRegisteredUser()
         }
 
-        // Set click listener for registration link
+        // Ustawienie nasłuchiwania kliknięcia na link rejestracji
         findViewById<View>(R.id.registerTextViewClickable)?.setOnClickListener(this)
     }
 
@@ -37,7 +37,7 @@ class LoginActivity : BaseActivity(), View.OnClickListener {
         view?.let {
             when (it.id) {
                 R.id.registerTextViewClickable -> {
-                    // Navigate to the registration screen when the link is clicked
+                    // Przejście do ekranu rejestracji po kliknięciu linku
                     val intent = Intent(this, RegisterActivity::class.java)
                     startActivity(intent)
                 }
@@ -46,8 +46,8 @@ class LoginActivity : BaseActivity(), View.OnClickListener {
     }
 
     /**
-     * Validates the login details entered by the user.
-     * @return True if the details are valid, otherwise False.
+     * Waliduje dane logowania wprowadzone przez użytkownika.
+     * @return True jeśli dane są poprawne, w przeciwnym razie False.
      */
     private fun validateLoginDetails(): Boolean {
         val email = inputEmail?.text.toString().trim { it <= ' ' }
@@ -63,21 +63,21 @@ class LoginActivity : BaseActivity(), View.OnClickListener {
                 false
             }
             else -> {
-                // Optionally show a success message
+                // Opcjonalnie można wyświetlić komunikat o powodzeniu
                 true
             }
         }
     }
 
     /**
-     * Logs in a registered user using Firebase Authentication.
+     * Loguje zarejestrowanego użytkownika przy użyciu Firebase Authentication.
      */
     private fun logInRegisteredUser() {
         if (validateLoginDetails()) {
             val email = inputEmail?.text.toString().trim { it <= ' ' }
             val password = inputPassword?.text.toString().trim { it <= ' ' }
 
-            // Sign in with FirebaseAuth
+            // Logowanie za pomocą FirebaseAuth
             FirebaseAuth.getInstance().signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
@@ -92,7 +92,7 @@ class LoginActivity : BaseActivity(), View.OnClickListener {
     }
 
     /**
-     * Navigates to the main activity after successful login and passes the user's UID to the main activity.
+     * Przechodzi do głównej aktywności po udanym logowaniu i przekazuje UID użytkownika.
      */
     open fun goToMainActivity() {
         val user = FirebaseAuth.getInstance().currentUser

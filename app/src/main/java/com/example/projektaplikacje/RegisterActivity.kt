@@ -13,11 +13,11 @@ import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
 import com.google.firebase.auth.FirebaseUser
 /**
- * Handles user registration with input validation and Firebase Authentication integration.
+ * Obsługuje rejestrację użytkownika z walidacją danych oraz integracją z Firebase Authentication.
  */
 class RegisterActivity : BaseActivity() {
 
-    // UI Components for the registration form
+    // Komponenty UI formularza rejestracji
     private var registerButton: Button? = null
     private var inputEmail: EditText? = null
     private var inputName: EditText? = null
@@ -28,23 +28,23 @@ class RegisterActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_register)
 
-        // Initialize input fields and the registration button
+        // Inicjalizacja pól formularza oraz przycisku rejestracji
         registerButton = findViewById(R.id.registerButton)
         inputEmail = findViewById(R.id.inputEmail)
         inputName = findViewById(R.id.inputName)
         inputPassword = findViewById(R.id.inputPasswordRegister)
         inputPasswordRepeat = findViewById(R.id.inputPasswordRepeat)
 
-        // Set a click listener for the registration button
+        // Ustawienie nasłuchiwania kliknięcia przycisku rejestracji
         registerButton?.setOnClickListener {
             registerUser()
         }
     }
 
     /**
-     * Validates the registration details entered by the user.
+     * Waliduje dane rejestracyjne wprowadzone przez użytkownika.
      *
-     * @return True if the details are valid, otherwise False.
+     * @return True jeśli dane są poprawne, w przeciwnym razie False.
      */
     private fun validateRegisterDetails(): Boolean {
         return when {
@@ -79,18 +79,18 @@ class RegisterActivity : BaseActivity() {
     }
 
     /**
-     * Navigates the user to the login activity.
+     * Przechodzi do ekranu logowania.
      *
-     * @param view The current view triggering the navigation.
+     * @param view Bieżący widok, który wywołał przejście.
      */
     fun goToLogin(view: View) {
         val intent = Intent(this, LoginActivity::class.java)
         startActivity(intent)
-        finish() // Close this activity to prevent returning to it without restarting the app.
+        finish() // Zakończ tę aktywność, aby uniemożliwić powrót bez restartu aplikacji.
     }
 
     /**
-     * Registers the user using Firebase Authentication.
+     * Rejestruje użytkownika przy użyciu Firebase Authentication.
      */
     private fun registerUser() {
         if (validateRegisterDetails()) {
@@ -103,7 +103,7 @@ class RegisterActivity : BaseActivity() {
                     if (task.isSuccessful) {
                         val firebaseUser: FirebaseUser = task.result!!.user!!
                         showErrorSnackBar(
-                            "You are registered successfully. Your user ID is ${firebaseUser.uid}",
+                            "Zarejestrowano pomyślnie. Twój identyfikator to ${firebaseUser.uid}",
                             false
                         )
 
@@ -111,20 +111,20 @@ class RegisterActivity : BaseActivity() {
                             id = firebaseUser.uid,
                             name = name,
                             email = email,
-                            phoneNumber = "", // Default empty
-                            dateOfBirth = "", // Default empty
-                            address = mapOf(), // Default empty map
-                            interests = listOf(), // Default empty list
-                            profilePictureUrl = "" // Default empty
+                            phoneNumber = "", // Domyślnie puste
+                            dateOfBirth = "", // Domyślnie puste
+                            address = mapOf(), // Domyślnie pusta mapa
+                            interests = listOf(), // Domyślna pusta lista
+                            profilePictureUrl = "" // Domyślnie puste
                         )
 
                         lifecycleScope.launch {
                             try {
                                 val firestoreClass = FirestoreClass()
                                 firestoreClass.registerOrUpdateUser(user)
-                                Toast.makeText(this@RegisterActivity, "Data saved successfully!", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(this@RegisterActivity, "Dane zapisane pomyślnie!", Toast.LENGTH_SHORT).show()
                             } catch (e: Exception) {
-                                Toast.makeText(this@RegisterActivity, "Failed to save data: ${e.message}", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(this@RegisterActivity, "Błąd zapisu danych: ${e.message}", Toast.LENGTH_SHORT).show()
                             }
                         }
 
@@ -138,7 +138,7 @@ class RegisterActivity : BaseActivity() {
     }
 
     /**
-     * Called when the user is successfully registered. Displays a success message using Toast.
+     * Wywoływane po pomyślnej rejestracji użytkownika. Wyświetla komunikat za pomocą Toast.
      */
     fun userRegistrationSuccess() {
         Toast.makeText(

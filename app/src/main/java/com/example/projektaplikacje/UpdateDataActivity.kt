@@ -14,11 +14,11 @@ import kotlinx.coroutines.launch
 import com.bumptech.glide.Glide
 
 /**
- * Activity to update user data in the Firestore database.
+ * Aktywność do aktualizacji danych użytkownika w bazie danych Firestore.
  */
 class UpdateDataActivity : AppCompatActivity() {
 
-    // UI components for collecting and displaying user data
+    // Komponenty UI do zbierania i wyświetlania danych użytkownika
     private lateinit var nameInput: EditText
     private lateinit var emailInput: EditText
     private lateinit var phoneInput: EditText
@@ -28,7 +28,7 @@ class UpdateDataActivity : AppCompatActivity() {
     private lateinit var cancelButton: Button
     private lateinit var profileImageView: ImageView
 
-    // Firebase authentication and Firestore class instances
+    // Instancje Firebase Authentication i klasy Firestore
     private val auth = FirebaseAuth.getInstance()
     private val firestoreClass = FirestoreClass()
 
@@ -36,48 +36,48 @@ class UpdateDataActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_update_date)
 
-        // Initialize UI components
+        // Inicjalizacja komponentów UI
         initializeUI()
 
         val userId = auth.currentUser?.uid
 
         if (userId != null) {
-            // Load user data asynchronously using FirestoreClass
+            // Asynchroniczne ładowanie danych użytkownika z FirestoreClass
             lifecycleScope.launch {
                 try {
-                    // Fetch user data from Firestore
-                    val data = firestoreClass.loadUserData(userId) // Suspend function
+                    // Pobierz dane użytkownika z Firestore
+                    val data = firestoreClass.loadUserData(userId) // Funkcja zawieszona
                     if (data != null) {
-                        val user = User.fromMap(data) // Convert Firestore data to a User object
-                        populateUI(user) // Populate UI with user data
+                        val user = User.fromMap(data) // Konwertuj dane Firestore do obiektu User
+                        populateUI(user) // Wypełnij UI danymi użytkownika
                     } else {
-                        Toast.makeText(this@UpdateDataActivity, "No user data found.", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this@UpdateDataActivity, "Brak danych użytkownika.", Toast.LENGTH_SHORT).show()
                     }
                 } catch (e: Exception) {
-                    Toast.makeText(this@UpdateDataActivity, "Error loading user data: ${e.message}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@UpdateDataActivity, "Błąd ładowania danych: ${e.message}", Toast.LENGTH_SHORT).show()
                 }
             }
         }
 
-        // Handle submit button click to save updated user data
+        // Obsługa kliknięcia przycisku zatwierdzenia – zapis zaktualizowanych danych
         submitButton.setOnClickListener {
             if (userId != null) {
                 lifecycleScope.launch {
-                    updateUserData(userId) // Save data asynchronously
+                    updateUserData(userId) // Zapisz dane asynchronicznie
                 }
             } else {
-                Toast.makeText(this, "User not logged in.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Użytkownik niezalogowany.", Toast.LENGTH_SHORT).show()
             }
         }
 
-        // Handle cancel button click to exit without saving
+        // Obsługa kliknięcia przycisku anulowania – wyjdź bez zapisu
         cancelButton.setOnClickListener {
-            finish() // Close the activity without changes
+            finish() // Zamknij aktywność bez zmian
         }
     }
 
     /**
-     * Initialize UI components by finding their views from the layout.
+     * Inicjalizuje komponenty UI poprzez powiązanie ich z widokami z layoutu.
      */
     private fun initializeUI() {
         nameInput = findViewById(R.id.nameInput)
@@ -91,40 +91,40 @@ class UpdateDataActivity : AppCompatActivity() {
     }
 
     /**
-     * Populate the UI with user data.
+     * Wypełnia interfejs użytkownika danymi.
      *
-     * @param user The User object containing the data to display.
+     * @param user Obiekt User zawierający dane do wyświetlenia.
      */
     private fun populateUI(user: User) {
-        nameInput.setText(user.name ?: "") // Set user name in the EditText
-        emailInput.setText(user.email) // Set user email in the EditText
-        phoneInput.setText(user.phoneNumber) // Set user phone number in the EditText
+        nameInput.setText(user.name ?: "") // Ustaw imię użytkownika w polu EditText
+        emailInput.setText(user.email) // Ustaw e-mail użytkownika
+        phoneInput.setText(user.phoneNumber) // Ustaw numer telefonu
 
-        // Convert the address map to a single string and display it
+        // Konwertuj mapę adresu na pojedynczy ciąg i wyświetl
         val address = user.address.values.joinToString(", ")
         addressInput.setText(address)
 
-        // Convert the list of interests to a comma-separated string and display it
+        // Konwertuj listę zainteresowań na ciąg rozdzielany przecinkami i wyświetl
         interestsInput.setText(user.interests.joinToString(", "))
 
-        // Load the profile picture using Glide, with a placeholder for fallback
+        // Załaduj zdjęcie profilowe przy użyciu Glide z obrazem zastępczym
         if (user.profilePictureUrl.isNotEmpty()) {
             Glide.with(this)
                 .load(Uri.parse(user.profilePictureUrl))
-                .placeholder(R.drawable.obrazpng) // Placeholder while the image loads
+                .placeholder(R.drawable.obrazpng) // Obraz zastępczy podczas ładowania
                 .into(profileImageView)
         } else {
-            profileImageView.setImageResource(R.drawable.obrazpng) // Default image if no profile picture is set
+            profileImageView.setImageResource(R.drawable.obrazpng) // Domyślny obraz, jeśli brak zdjęcia profilowego
         }
     }
 
     /**
-     * Collect updated data from UI and update it in Firestore.
+     * Zbiera zaktualizowane dane z UI i zapisuje je w Firestore.
      *
-     * @param userId The ID of the user being updated.
+     * @param userId ID użytkownika, którego dane są aktualizowane.
      */
     private suspend fun updateUserData(userId: String) {
-        // Parse the address from a comma-separated string into a structured map
+        // Parsuje adres z tekstu rozdzielonego przecinkami do zmapowanej struktury
         val addressParts = addressInput.text.toString().split(",").map { it.trim() }
         val addressMap = if (addressParts.size == 3) {
             mapOf(
@@ -133,26 +133,26 @@ class UpdateDataActivity : AppCompatActivity() {
                 "postcode" to addressParts[2]
             )
         } else {
-            mapOf() // Default empty map if address format is incorrect
+            mapOf() // Domyślna pusta mapa, jeśli adres w nieprawidłowym formacie
         }
 
-        // Prepare the updated data as a map
+        // Przygotuj zaktualizowane dane jako mapę
         val updatedData = mapOf(
             "name" to nameInput.text.toString(),
             "email" to emailInput.text.toString(),
             "phoneNumber" to phoneInput.text.toString(),
             "address" to addressMap,
-            "interests" to interestsInput.text.toString().split(",").map { it.trim() } // Convert comma-separated string to a list
+            "interests" to interestsInput.text.toString().split(",").map { it.trim() } // Zamiana ciągu na listę
         )
 
         try {
-            // Save the updated data to Firestore
-            firestoreClass.updateUserData(userId, updatedData) // Suspend function
-            Toast.makeText(this, "Data updated successfully!", Toast.LENGTH_SHORT).show()
-            setResult(RESULT_OK) // Notify the calling activity that data was updated
-            finish() // Close the activity
+            // Zapisz zaktualizowane dane do Firestore
+            firestoreClass.updateUserData(userId, updatedData) // Funkcja zawieszona
+            Toast.makeText(this, "Dane zaktualizowane pomyślnie!", Toast.LENGTH_SHORT).show()
+            setResult(RESULT_OK) // Powiadom aktywność wywołującą, że dane zostały zaktualizowane
+            finish() // Zamknij aktywność
         } catch (e: Exception) {
-            Toast.makeText(this, "Failed to update data: ${e.message}", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Błąd aktualizacji danych: ${e.message}", Toast.LENGTH_SHORT).show()
         }
     }
 }
