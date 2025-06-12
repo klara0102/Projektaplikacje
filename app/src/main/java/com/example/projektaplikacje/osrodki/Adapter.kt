@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
-class OsrodkiAdapter(private val osrodkiList: List<Osrodek>) : RecyclerView.Adapter<OsrodkiAdapter.OsrodekViewHolder>() {
+class Adapter(private val osrodkiList: List<Osrodek>) : RecyclerView.Adapter<Adapter.OsrodekViewHolder>() {
 
     inner class OsrodekViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val tvNazwa: TextView = itemView.findViewById(R.id.tvNazwa)
