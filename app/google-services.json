@@ -7,47 +7,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:26821775352:android:331e2e2536cead24e5100d",
-        "android_client_info": {
-          "package_name": "com.example.projekt"
-        }
-      },
-      "oauth_client": [],
-      "api_key": [
-        {
-          "current_key": "AIzaSyDytnI7Gt9qkGGxjznWsoCw7GR5XimGLto"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": []
-        }
-      }
-    },
-    {
-      "client_info": {
         "mobilesdk_app_id": "1:26821775352:android:bb3c70898b091c78e5100d",
         "android_client_info": {
           "package_name": "com.example.projektaplikacje"
-        }
-      },
-      "oauth_client": [],
-      "api_key": [
-        {
-          "current_key": "AIzaSyDytnI7Gt9qkGGxjznWsoCw7GR5XimGLto"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": []
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:26821775352:android:da1b618aa49e1e95e5100d",
-        "android_client_info": {
-          "package_name": "com.example.projektxx"
         }
       },
       "oauth_client": [],
