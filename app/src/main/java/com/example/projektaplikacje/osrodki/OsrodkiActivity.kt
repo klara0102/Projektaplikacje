@@ -11,7 +11,7 @@ class OsrodkiActivity : AppCompatActivity() {
 
     private lateinit var recyclerView: RecyclerView
     private val osrodkiList = mutableListOf<Osrodek>()
-    private lateinit var adapter: OsrodkiAdapter
+    private lateinit var adapter: Adapter
 
     private val db = FirebaseFirestore.getInstance()
 
@@ -21,7 +21,7 @@ class OsrodkiActivity : AppCompatActivity() {
 
         recyclerView = findViewById(R.id.recyclerViewOsrodki)
         recyclerView.layoutManager = LinearLayoutManager(this)
-        adapter = OsrodkiAdapter(osrodkiList)
+        adapter = Adapter(osrodkiList)
         recyclerView.adapter = adapter
 
         loadOsrodkiFromFirestore()
