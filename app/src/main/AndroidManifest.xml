@@ -45,7 +45,8 @@
             android:exported="false"
             android:label="@string/app_name"
             android:theme="@style/Theme.FireBaseAuthDemo" />
-
+        <activity android:name=".osrodki.OsrodkiActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
     </application>
 
 </manifest>

@@ -175,4 +175,20 @@
         app:layout_constraintTop_toBottomOf="@id/submitButton"
         app:layout_constraintWidth_percent="0.6" />
 
+    <Button
+        android:id="@+id/buttonOpenOsrodki"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:minHeight="56dp"
+        android:text="Pokaż listę ośrodków"
+        android:textColor="#FFFFFF"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:backgroundTint="#BF360C"
+        android:layout_marginTop="24dp"
+        app:layout_constraintTop_toBottomOf="@id/updateDataButton"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintWidth_percent="0.8" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

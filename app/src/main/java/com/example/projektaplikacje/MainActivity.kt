@@ -1,6 +1,7 @@
 package com.example.projektaplikacje
 import com.example.projektaplikacje.firebasee.User
 import com.example.projektaplikacje.firebasee.FirestoreClass
+import com.example.projektaplikacje.osrodki.OsrodkiActivity
 import com.google.firebase.auth.FirebaseAuth
 import android.app.DatePickerDialog
 import android.content.Intent
@@ -17,6 +18,7 @@ import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
 import java.util.Calendar
 import com.bumptech.glide.Glide
+
 /**
  * The main activity of the app where user information is displayed and managed.
  */
@@ -32,6 +34,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var selectImageButton: Button
     private lateinit var dobButton: Button
     private lateinit var ageText: TextView
+    private lateinit var openOsrodkiButton: Button  // <-- nowy przycisk
 
     private var userName: String? = null
     private var selectedDateOfBirth: String = ""
@@ -39,8 +42,6 @@ class MainActivity : AppCompatActivity() {
 
     private val auth = FirebaseAuth.getInstance() // Firebase authentication instance
     private val firestoreClass = FirestoreClass() // Firestore interaction helper class
-
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -73,6 +74,12 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(this, UpdateDataActivity::class.java)
             updateDataLauncher.launch(intent)
         }
+
+        // Nowa obsługa kliknięcia przycisku listy ośrodków
+        openOsrodkiButton.setOnClickListener {
+            val intent = Intent(this, OsrodkiActivity::class.java)  // <-- aktywność do stworzenia
+            startActivity(intent)
+        }
     }
 
     private val updateDataLauncher =
@@ -85,9 +92,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-    /**
-     * Initialize UI components by finding their views.
-     */
     private fun initializeUI() {
         profileImageView = findViewById(R.id.profileImageView)
         phoneInput = findViewById(R.id.phoneInput)
@@ -99,6 +103,7 @@ class MainActivity : AppCompatActivity() {
         selectImageButton = findViewById(R.id.selectImageButton)
         dobButton = findViewById(R.id.dobButton)
         ageText = findViewById(R.id.ageText)
+        openOsrodkiButton = findViewById(R.id.buttonOpenOsrodki)  // <-- dodane tutaj
     }
 
     /**
