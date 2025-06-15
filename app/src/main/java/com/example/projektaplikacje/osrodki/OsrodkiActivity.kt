@@ -1,6 +1,8 @@
 package com.example.projektaplikacje.osrodki
+
 import android.os.Bundle
 import android.util.Log
+import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -19,10 +21,17 @@ class OsrodkiActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_osrodki)
 
+        // Inicjalizacja RecyclerView
         recyclerView = findViewById(R.id.recyclerViewOsrodki)
         recyclerView.layoutManager = LinearLayoutManager(this)
         adapter = Adapter(osrodkiList)
         recyclerView.adapter = adapter
+
+        // Obsługa przycisku WRÓĆ
+        val backButton = findViewById<Button>(R.id.button_back)
+        backButton.setOnClickListener {
+            finish() // zamyka tę aktywność i wraca do poprzedniej
+        }
 
         loadOsrodkiFromFirestore()
     }
