@@ -10,7 +10,9 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
+
 import android.widget.TextView
+import android.view.View
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -26,10 +28,10 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var profileImageView: ImageView
     private lateinit var phoneInput: EditText
-    private lateinit var dobText: TextView
+    private lateinit var phoneDisplayText: TextView
     private lateinit var addressInput: EditText
-    private lateinit var interestsInput: EditText
     private lateinit var updateButton: Button
+    private lateinit var selectConditionsButton: Button
     private lateinit var submitButton: Button
     private lateinit var selectImageButton: Button
     private lateinit var dobButton: Button
@@ -43,45 +45,6 @@ class MainActivity : AppCompatActivity() {
     private val auth = FirebaseAuth.getInstance() // Instancja Firebase Authentication
     private val firestoreClass = FirestoreClass() // Pomocnicza klasa do interakcji z Firestore
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-
-        // Inicjalizacja komponentów UI
-        initializeUI()
-
-        // Załaduj istniejące dane użytkownika, jeśli jest zalogowany
-        val userId = auth.currentUser?.uid
-        if (userId != null) {
-            loadUserData(userId)
-        }
-
-        // Otwórz galerię w celu wyboru zdjęcia profilowego
-        selectImageButton.setOnClickListener { openGallery() }
-
-        // Otwórz DatePicker w celu wyboru daty urodzenia
-        dobButton.setOnClickListener { openDatePicker() }
-
-        // Zapisz dane użytkownika do Firestore
-        submitButton.setOnClickListener {
-            lifecycleScope.launch {
-                saveUserData()
-            }
-        }
-
-        // Przejście do aktywności UpdateDataActivity
-        updateButton.setOnClickListener {
-            val intent = Intent(this, UpdateDataActivity::class.java)
-            updateDataLauncher.launch(intent)
-        }
-
-        // Obsługa kliknięcia przycisku otwierającego listę ośrodków
-        openOsrodkiButton.setOnClickListener {
-            val intent = Intent(this, OsrodkiActivity::class.java)
-            startActivity(intent)
-        }
-    }
-
     private val updateDataLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == RESULT_OK) {
@@ -92,20 +55,71 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-    private fun initializeUI() {
-        profileImageView = findViewById(R.id.profileImageView)
-        phoneInput = findViewById(R.id.phoneInput)
-        dobText = findViewById(R.id.dobText)
-        addressInput = findViewById(R.id.addressInput)
-        interestsInput = findViewById(R.id.interestsInput)
-        updateButton = findViewById(R.id.updateDataButton)
-        submitButton = findViewById(R.id.submitButton)
-        selectImageButton = findViewById(R.id.selectImageButton)
-        dobButton = findViewById(R.id.dobButton)
-        ageText = findViewById(R.id.ageText)
-        openOsrodkiButton = findViewById(R.id.buttonOpenOsrodki)  // <-- dodane tutaj
-    }
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
 
+        initializeUI()
+        selectConditionsButton.setOnClickListener {
+            showConditionsDialog()
+        }
+        phoneDisplayText.visibility = View.GONE
+
+        submitButton.setOnClickListener {
+            val phone = phoneInput.text.toString().trim()
+            if (phone.isNotEmpty()) {
+                phoneInput.visibility = View.GONE
+                phoneDisplayText.visibility = View.VISIBLE
+                phoneDisplayText.text = "Twój numer telefonu: $phone"
+
+                lifecycleScope.launch {
+                    saveUserData()
+                }
+            } else {
+                Toast.makeText(this, "Proszę wpisać numer telefonu", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        updateButton.setOnClickListener {
+            val intent = Intent(this, UpdateDataActivity::class.java)
+            updateDataLauncher.launch(intent)
+        }
+
+        openOsrodkiButton.setOnClickListener {
+            val intent = Intent(this, OsrodkiActivity::class.java)
+            intent.putStringArrayListExtra("filters", ArrayList(selectedConditions))
+            startActivity(intent)
+        }
+
+        // **Tutaj dodaj wywołanie openDatePicker przy kliknięciu dobButton**
+        dobButton.setOnClickListener {
+            openDatePicker()
+        }
+
+
+    }
+    private fun showConditionsDialog() {
+        val conditionsArray = allConditions.toTypedArray()
+        val selectedItems = BooleanArray(allConditions.size) { selectedConditions.contains(allConditions[it]) }
+
+        val builder = android.app.AlertDialog.Builder(this)
+        builder.setTitle("Wybierz warunki")
+        builder.setMultiChoiceItems(conditionsArray, selectedItems) { _, which, isChecked ->
+            if (isChecked) {
+                selectedConditions.add(allConditions[which])
+            } else {
+                selectedConditions.remove(allConditions[which])
+            }
+        }
+        builder.setPositiveButton("OK") { dialog, _ ->
+            dialog.dismiss()
+            Toast.makeText(this, "Wybrane: ${selectedConditions.joinToString()}", Toast.LENGTH_SHORT).show()
+        }
+        builder.setNegativeButton("Anuluj") { dialog, _ ->
+            dialog.dismiss()
+        }
+        builder.show()
+    }
     /**
      * Ładuje dane użytkownika z Firestore i uzupełnia UI.
      *
@@ -135,7 +149,20 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+    private fun initializeUI() {
+        profileImageView = findViewById(R.id.profileImageView)
+        phoneInput = findViewById(R.id.phoneInput)
+        phoneDisplayText = findViewById(R.id.phoneDisplayText)
+        addressInput = findViewById(R.id.addressInput)
+        updateButton = findViewById(R.id.updateDataButton)
+        submitButton = findViewById(R.id.submitButton)
+        selectImageButton = findViewById(R.id.selectImageButton)
+        dobButton = findViewById(R.id.dobButton)
+        ageText = findViewById(R.id.ageText)
+        openOsrodkiButton = findViewById(R.id.buttonOpenOsrodki)
+        selectConditionsButton = findViewById(R.id.buttonSelectConditions)
 
+    }
     /**
      * Zapisuje dane użytkownika do Firestore.
      */
@@ -154,8 +181,7 @@ class MainActivity : AppCompatActivity() {
             mapOf()
         }
 
-        // Podział zainteresowań na listę
-        val interests = interestsInput.text.toString().split(",").map { it.trim() }
+
 
         // Pobierz istniejące dane, aby uzupełnić brakujące pola
         val data = firestoreClass.loadUserData(userId)
@@ -174,7 +200,7 @@ class MainActivity : AppCompatActivity() {
             phoneNumber = phoneInput.text.toString(),
             dateOfBirth = selectedDateOfBirth,
             address = addressMap,
-            interests = interests,
+
             profilePictureUrl = selectedImageUri?.toString()
                 ?: User.fromMap(data!!).profilePictureUrl
         )
@@ -205,15 +231,13 @@ class MainActivity : AppCompatActivity() {
             val address = user.address.values.joinToString(", ")
             addressInput.setText(address)
 
-            interestsInput.setText(user.interests.joinToString(", "))
+
 
             // Ustaw datę urodzenia i oblicz/wyswietl wiek
             if (user.dateOfBirth.isNotEmpty()) {
-                dobText.text = user.dateOfBirth
                 val age = calculateAge(user.dateOfBirth)
                 ageText.text = "Wiek: $age"
             } else {
-                dobText.text = "Wybierz datę urodzenia"
                 ageText.text = ""
             }
 
@@ -259,7 +283,6 @@ class MainActivity : AppCompatActivity() {
             this,
             { _, selectedYear, selectedMonth, selectedDay ->
                 selectedDateOfBirth = "$selectedYear-${selectedMonth + 1}-$selectedDay"
-                dobText.text = selectedDateOfBirth
 
                 // Oblicz i wyświetl wiek
                 val age = calculateAge(selectedDateOfBirth)
@@ -302,4 +325,9 @@ class MainActivity : AppCompatActivity() {
 
         return age
     }
+    private val allConditions = listOf(
+        "Migrena", "Choroby serca", "Choroby oczu", "Atopowe zapalenie skóry",
+        "RZS", "Padaczka", "Cukrzyca", "Choroby tarczycy"
+    )
+    private val selectedConditions = mutableSetOf<String>()
 }
