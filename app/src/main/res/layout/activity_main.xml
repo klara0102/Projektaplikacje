@@ -1,198 +1,199 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFF3E0"
-    tools:context=".MainActivity">
+    android:fillViewport="true">
 
-    <!-- Welcome Text -->
-
-    <!-- Profile Picture Preview -->
-
-    <TextView
-        android:id="@+id/welcomeText"
-        android:layout_width="wrap_content"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="Witamy, Użytkowniku!"
-        android:textColor="#E65100"
-        android:textSize="22sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:background="#FFF3E0"
+        tools:context=".MainActivity">
 
-    <ImageView
-        android:id="@+id/profileImageView"
-        android:layout_width="187dp"
-        android:layout_height="142dp"
-        android:layout_marginTop="16dp"
-        android:contentDescription="Zdjęcie profilowe"
-        android:scaleType="centerCrop"
-        android:src="@drawable/obrazpng"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/welcomeText" />
+        <TextView
+            android:id="@+id/welcomeText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Witamy, Użytkowniku!"
+            android:textColor="#E65100"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- Button to Select Profile Picture -->
-    <Button
-        android:id="@+id/selectImageButton"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:backgroundTint="#E65100"
-        android:minHeight="48dp"
-        android:text="Wybierz zdjęcie profilowe"
-        android:textColor="#FFF3E0"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/profileImageView"
-        app:layout_constraintWidth_percent="0.8" />
+        <ImageView
+            android:id="@+id/profileImageView"
+            android:layout_width="187dp"
+            android:layout_height="142dp"
+            android:layout_marginTop="16dp"
+            android:contentDescription="Zdjęcie profilowe"
+            android:scaleType="centerCrop"
+            android:src="@drawable/obrazpng"
+            app:layout_constraintTop_toBottomOf="@id/welcomeText"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- Date of Birth Selector -->
+        <Button
+            android:id="@+id/selectImageButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:backgroundTint="#E65100"
+            android:minHeight="48dp"
+            android:text="Wybierz zdjęcie profilowe"
+            android:textColor="#FFF3E0"
+            app:layout_constraintTop_toBottomOf="@id/profileImageView"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintWidth_percent="0.8" />
 
-    <!-- Date of Birth Display -->
-    <!-- Przycisk wyboru daty urodzenia -->
-    <Button
-        android:id="@+id/dobButton"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        android:backgroundTint="#E65100"
-        android:minHeight="48dp"
-        android:text="Wybierz datę urodzenia"
-        android:textColor="#FFF3E0"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/selectImageButton"
-        app:layout_constraintWidth_percent="0.8" />
+        <Button
+            android:id="@+id/dobButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:backgroundTint="#E65100"
+            android:minHeight="48dp"
+            android:text="Wybierz datę urodzenia"
+            android:textColor="#FFF3E0"
+            app:layout_constraintTop_toBottomOf="@id/selectImageButton"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintWidth_percent="0.8" />
 
-    <!-- TYLKO WIEK, bez wyświetlania daty -->
+        <TextView
+            android:id="@+id/ageText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Twój wiek: "
+            android:textColor="#E65100"
+            app:layout_constraintTop_toBottomOf="@id/dobButton"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintWidth_percent="0.8" />
 
+        <EditText
+            android:id="@+id/phoneInput"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:backgroundTint="#FFCC80"
+            android:hint="Wprowadź numer telefonu"
+            android:inputType="phone"
+            android:minHeight="48dp"
+            android:paddingVertical="12dp"
+            android:textColor="#E65100"
+            android:textColorHint="#FFB74D"
+            app:layout_constraintTop_toBottomOf="@id/ageText"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintWidth_percent="0.8" />
 
-    <TextView
-        android:id="@+id/ageText"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="Twój wiek: "
-        android:textColor="#E65100"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/dobButton"
-        app:layout_constraintWidth_percent="0.8" />
+        <EditText
+            android:id="@+id/addressInput"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:backgroundTint="#FFCC80"
+            android:hint="Adres (Miasto, Ulica, Kod pocztowy)"
+            android:inputType="textPostalAddress"
+            android:minHeight="48dp"
+            android:paddingVertical="12dp"
+            android:textColor="#E65100"
+            android:textColorHint="#FFB74D"
+            app:layout_constraintTop_toBottomOf="@id/phoneInput"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintWidth_percent="0.8" />
 
-    <EditText
-        android:id="@+id/phoneInput"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        android:backgroundTint="#FFCC80"
-        android:hint="Wprowadź numer telefonu"
-        android:inputType="phone"
-        android:minHeight="48dp"
-        android:paddingVertical="12dp"
-        android:textColor="#E65100"
-        android:textColorHint="#FFB74D"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/ageText"
-        app:layout_constraintWidth_percent="0.8" />
-    <TextView
-        android:id="@+id/phoneDisplayText"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        android:textColor="#E65100"
-        android:textSize="16sp"
-        app:layout_constraintTop_toBottomOf="@id/phoneInput"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintWidth_percent="0.8"
-        android:text="" />
-    <EditText
-        android:id="@+id/addressInput"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:backgroundTint="#FFCC80"
-        android:hint="Adres (Miasto, Ulica, Kod pocztowy)"
-        android:inputType="textPostalAddress"
-        android:minHeight="48dp"
-        android:paddingVertical="12dp"
-        android:textColor="#E65100"
-        android:textColorHint="#FFB74D"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/phoneInput"
-        app:layout_constraintWidth_percent="0.8" />
+        <TextView
+            android:id="@+id/phoneDisplayText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="Twój numer telefonu:"
+            android:textSize="16sp"
+            android:textColor="#E65100"
+            app:layout_constraintTop_toBottomOf="@id/addressInput"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintWidth_percent="0.85" />
 
-    <!-- Update Data Button -->
-
-    <Button
-        android:id="@+id/submitButton"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="2dp"
-        android:backgroundTint="#E65100"
-        android:minHeight="48dp"
-        android:text="Zatwierdź"
-        android:textColor="#FFF3E0"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/addressInput"
-        app:layout_constraintWidth_percent="0.6" />
-
-    <Button
-        android:id="@+id/updateDataButton"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="2dp"
-        android:backgroundTint="#FFCC80"
-        android:minHeight="48dp"
-        android:text="Aktualizuj dane"
-        android:textColor="#E65100"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/submitButton"
-        app:layout_constraintWidth_percent="0.6" />
-
-    <Button
-        android:id="@+id/buttonSelectConditions"
-        android:layout_width="0dp"
-        android:layout_height="64dp"
-        android:layout_marginTop="24dp"
-        android:backgroundTint="#FF8A65"
-        android:text="Wybierz schorzenia"
-        android:textColor="#FFFFFF"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@id/buttonOpenOsrodki"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.508"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/updateDataButton"
-        app:layout_constraintVertical_bias="0.489"
-        app:layout_constraintWidth_percent="0.85" />
+        <TextView
+            android:id="@+id/addressDisplayText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Adres:"
+            android:textSize="16sp"
+            android:textColor="#E65100"
+            app:layout_constraintTop_toBottomOf="@id/phoneDisplayText"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintWidth_percent="0.85" />
 
 
-    <Button
-        android:id="@+id/buttonOpenOsrodki"
-        android:layout_width="0dp"
-        android:layout_height="72dp"
-        android:layout_marginBottom="92dp"
-        android:backgroundTint="#BF360C"
-        android:text="Pokaż listę ośrodków"
-        android:textColor="#FFFFFF"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.508"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintWidth_percent="0.85" />
+        <Button
+            android:id="@+id/submitButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:backgroundTint="#E65100"
+            android:minHeight="48dp"
+            android:text="Zatwierdź"
+            android:textColor="#FFF3E0"
+            app:layout_constraintTop_toBottomOf="@id/addressDisplayText"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintWidth_percent="0.6" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <Button
+            android:id="@+id/updateDataButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:backgroundTint="#FFCC80"
+            android:minHeight="48dp"
+            android:text="Aktualizuj dane"
+            android:textColor="#E65100"
+            app:layout_constraintTop_toBottomOf="@id/submitButton"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintWidth_percent="0.6" />
+
+        <Button
+            android:id="@+id/buttonSelectConditions"
+            android:layout_width="0dp"
+            android:layout_height="64dp"
+            android:layout_marginTop="24dp"
+            android:backgroundTint="#FF8A65"
+            android:text="Wybierz schorzenia"
+            android:textColor="#FFFFFF"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintTop_toBottomOf="@id/updateDataButton"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintWidth_percent="0.85" />
+
+        <Button
+            android:id="@+id/buttonOpenOsrodki"
+            android:layout_width="0dp"
+            android:layout_height="72dp"
+            android:layout_marginTop="16dp"
+            android:backgroundTint="#BF360C"
+            android:text="Pokaż listę ośrodków"
+            android:textColor="#FFFFFF"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            app:layout_constraintTop_toBottomOf="@id/buttonSelectConditions"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintWidth_percent="0.85" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

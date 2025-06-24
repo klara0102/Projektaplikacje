@@ -36,6 +36,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var selectImageButton: Button
     private lateinit var dobButton: Button
     private lateinit var ageText: TextView
+    private lateinit var addressDisplayText: TextView
     private lateinit var openOsrodkiButton: Button  // <-- nowy przycisk
 
     private var userName: String? = null
@@ -66,17 +67,22 @@ class MainActivity : AppCompatActivity() {
         phoneDisplayText.visibility = View.GONE
 
         submitButton.setOnClickListener {
+
             val phone = phoneInput.text.toString().trim()
-            if (phone.isNotEmpty()) {
+            val address = addressInput.text.toString().trim()
+            if (phone.isNotEmpty() && address.isNotEmpty()) {
                 phoneInput.visibility = View.GONE
+                addressInput.visibility = View.GONE
                 phoneDisplayText.visibility = View.VISIBLE
+                addressDisplayText.visibility = View.VISIBLE
                 phoneDisplayText.text = "Twój numer telefonu: $phone"
+                addressDisplayText.text = "Adres: $address"
 
                 lifecycleScope.launch {
                     saveUserData()
                 }
             } else {
-                Toast.makeText(this, "Proszę wpisać numer telefonu", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Proszę wpisać numer telefonu i adres", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -155,6 +161,7 @@ class MainActivity : AppCompatActivity() {
         phoneDisplayText = findViewById(R.id.phoneDisplayText)
         addressInput = findViewById(R.id.addressInput)
         updateButton = findViewById(R.id.updateDataButton)
+        addressDisplayText = findViewById(R.id.addressDisplayText)
         submitButton = findViewById(R.id.submitButton)
         selectImageButton = findViewById(R.id.selectImageButton)
         dobButton = findViewById(R.id.dobButton)
@@ -227,11 +234,17 @@ class MainActivity : AppCompatActivity() {
         try {
             phoneInput.setText(user.phoneNumber)
 
-            // Konwertuj adres z mapy na pojedynczy ciąg tekstowy
+
+            // Adres
             val address = user.address.values.joinToString(", ")
-            addressInput.setText(address)
-
-
+            if (address.isNotEmpty()) {
+                addressInput.visibility = View.GONE
+                addressDisplayText.visibility = View.VISIBLE
+                addressDisplayText.text = "Adres: $address"
+            } else {
+                addressInput.visibility = View.VISIBLE
+                addressDisplayText.visibility = View.GONE
+            }
 
             // Ustaw datę urodzenia i oblicz/wyswietl wiek
             if (user.dateOfBirth.isNotEmpty()) {
@@ -330,4 +343,6 @@ class MainActivity : AppCompatActivity() {
         "RZS", "Padaczka", "Cukrzyca", "Choroby tarczycy"
     )
     private val selectedConditions = mutableSetOf<String>()
-}
+
+
+    }
