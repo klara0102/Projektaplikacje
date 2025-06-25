@@ -2,6 +2,7 @@ package com.example.projektaplikacje
 import com.example.projektaplikacje.firebasee.User
 import com.example.projektaplikacje.firebasee.FirestoreClass
 import com.google.firebase.auth.FirebaseAuth
+import android.util.Log
 import android.net.Uri
 import android.os.Bundle
 import android.widget.Button
@@ -84,7 +85,6 @@ class UpdateDataActivity : AppCompatActivity() {
         emailInput = findViewById(R.id.emailInput)
         phoneInput = findViewById(R.id.phoneInput)
         addressInput = findViewById(R.id.addressInput)
-        interestsInput = findViewById(R.id.interestsInput)
         submitButton = findViewById(R.id.submitButton)
         cancelButton = findViewById(R.id.cancelButton)
         profileImageView = findViewById(R.id.profileImageView)
@@ -124,7 +124,6 @@ class UpdateDataActivity : AppCompatActivity() {
      * @param userId ID użytkownika, którego dane są aktualizowane.
      */
     private suspend fun updateUserData(userId: String) {
-        // Parsuje adres z tekstu rozdzielonego przecinkami do zmapowanej struktury
         val addressParts = addressInput.text.toString().split(",").map { it.trim() }
         val addressMap = if (addressParts.size == 3) {
             mapOf(
@@ -133,25 +132,26 @@ class UpdateDataActivity : AppCompatActivity() {
                 "postcode" to addressParts[2]
             )
         } else {
-            mapOf() // Domyślna pusta mapa, jeśli adres w nieprawidłowym formacie
+            mapOf()
         }
 
-        // Przygotuj zaktualizowane dane jako mapę
         val updatedData = mapOf(
             "name" to nameInput.text.toString(),
             "email" to emailInput.text.toString(),
             "phoneNumber" to phoneInput.text.toString(),
             "address" to addressMap,
-            "interests" to interestsInput.text.toString().split(",").map { it.trim() } // Zamiana ciągu na listę
+            "interests" to interestsInput.text.toString().split(",").map { it.trim() }
         )
 
         try {
-            // Zapisz zaktualizowane dane do Firestore
-            firestoreClass.updateUserData(userId, updatedData) // Funkcja zawieszona
+            Log.d("UpdateDataActivity", "Próba aktualizacji danych: $updatedData")
+            firestoreClass.updateUserData(userId, updatedData)
+            Log.d("UpdateDataActivity", "Aktualizacja zakończona sukcesem")
             Toast.makeText(this, "Dane zaktualizowane pomyślnie!", Toast.LENGTH_SHORT).show()
-            setResult(RESULT_OK) // Powiadom aktywność wywołującą, że dane zostały zaktualizowane
-            finish() // Zamknij aktywność
+            setResult(RESULT_OK)
+            finish()
         } catch (e: Exception) {
+            Log.e("UpdateDataActivity", "Błąd aktualizacji: ${e.message}")
             Toast.makeText(this, "Błąd aktualizacji danych: ${e.message}", Toast.LENGTH_SHORT).show()
         }
     }

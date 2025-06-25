@@ -20,33 +20,51 @@
             android:layout_height="wrap_content"
             android:text="Nazwa ośrodka"
             android:textStyle="bold"
-            android:textSize="18sp"
-            />
+            android:textSize="18sp" />
 
         <TextView
             android:id="@+id/tvAdres"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Adres"
-            android:textSize="14sp"
-            />
+            android:textSize="14sp" />
 
         <TextView
             android:id="@+id/tvTelefon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Telefon"
-            android:textSize="14sp"
-            />
+            android:textSize="14sp" />
 
         <TextView
             android:id="@+id/tvOpis"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Schorzenia"
-            android:textSize="14sp"
-            />
+            android:textSize="14sp" />
+
+        <LinearLayout
+            android:id="@+id/expandableLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone"
+            android:paddingTop="8dp">
+
+            <ImageView
+                android:id="@+id/imageViewOsrodek"
+                android:layout_width="match_parent"
+                android:layout_height="180dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/mapa" />
+
+            <Button
+                android:id="@+id/buttonZapiszSie"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Zapisz się!"
+                android:layout_marginTop="8dp" />
+        </LinearLayout>
 
     </LinearLayout>
-
 </androidx.cardview.widget.CardView>

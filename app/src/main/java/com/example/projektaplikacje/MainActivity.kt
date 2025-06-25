@@ -61,6 +61,10 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         initializeUI()
+        val userId = auth.currentUser?.uid
+        if (userId != null) {
+            loadUserData(userId)
+        }
         selectConditionsButton.setOnClickListener {
             showConditionsDialog()
         }
@@ -70,20 +74,27 @@ class MainActivity : AppCompatActivity() {
 
             val phone = phoneInput.text.toString().trim()
             val address = addressInput.text.toString().trim()
-            if (phone.isNotEmpty() && address.isNotEmpty()) {
-                phoneInput.visibility = View.GONE
-                addressInput.visibility = View.GONE
-                phoneDisplayText.visibility = View.VISIBLE
-                addressDisplayText.visibility = View.VISIBLE
-                phoneDisplayText.text = "Twój numer telefonu: $phone"
-                addressDisplayText.text = "Adres: $address"
-
-                lifecycleScope.launch {
-                    saveUserData()
-                }
-            } else {
-                Toast.makeText(this, "Proszę wpisać numer telefonu i adres", Toast.LENGTH_SHORT).show()
+            if (phone.isEmpty() && address.isEmpty()) {
+                Toast.makeText(this, "Proszę wpisać numer telefonu lub adres", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
             }
+
+            // Ukryj pola jeśli wypełnione
+            if (phone.isNotEmpty()) {
+                phoneInput.visibility = View.GONE
+                phoneDisplayText.visibility = View.VISIBLE
+                phoneDisplayText.text = "Twój numer telefonu: $phone"
+            }
+            if (address.isNotEmpty()) {
+                addressInput.visibility = View.GONE
+                addressDisplayText.visibility = View.VISIBLE
+                addressDisplayText.text = "Adres: $address"
+            }
+
+            lifecycleScope.launch {
+                saveUserData()
+            }
+            submitButton.visibility = View.GONE
         }
 
         updateButton.setOnClickListener {
@@ -168,6 +179,8 @@ class MainActivity : AppCompatActivity() {
         ageText = findViewById(R.id.ageText)
         openOsrodkiButton = findViewById(R.id.buttonOpenOsrodki)
         selectConditionsButton = findViewById(R.id.buttonSelectConditions)
+        phoneDisplayText.visibility = View.GONE
+        addressDisplayText.visibility = View.GONE
 
     }
     /**
@@ -232,11 +245,22 @@ class MainActivity : AppCompatActivity() {
      */
     private fun populateUI(user: User) {
         try {
-            phoneInput.setText(user.phoneNumber)
 
+            if (!user.phoneNumber.isNullOrEmpty()) {
+                phoneInput.visibility = View.GONE
+                phoneDisplayText.visibility = View.VISIBLE
+                phoneDisplayText.text = "Twój numer telefonu: ${user.phoneNumber}"
+            } else {
+                phoneInput.visibility = View.VISIBLE
+                phoneDisplayText.visibility = View.GONE
+            }
 
             // Adres
-            val address = user.address.values.joinToString(", ")
+            val city = user.address["city"] ?: ""
+            val street = user.address["street"] ?: ""
+            val postcode = user.address["postcode"] ?: ""
+            val address = listOf(city, street, postcode).filter { it.isNotEmpty() }.joinToString(", ")
+
             if (address.isNotEmpty()) {
                 addressInput.visibility = View.GONE
                 addressDisplayText.visibility = View.VISIBLE

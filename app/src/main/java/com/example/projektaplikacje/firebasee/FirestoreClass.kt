@@ -69,7 +69,7 @@ class FirestoreClass {
             // Update the user document with the filtered data
             mFireStore.collection("users")
                 .document(userId)
-                .update(filteredData)
+                .set(filteredData)
                 .await() // Suspends until the operation is complete
         } catch (e: Exception) {
             // Throw an exception with a descriptive message if an error occurs

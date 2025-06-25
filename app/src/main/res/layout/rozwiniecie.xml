@@ -1,0 +1,41 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/container"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <!-- Widoczna część -->
+    <TextView
+        android:id="@+id/textViewOsrodekName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Nazwa Ośrodka"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
+    <!-- Ukryta część (na początku visibility=gone) -->
+    <LinearLayout
+        android:id="@+id/expandableLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone"
+        android:paddingTop="8dp">
+
+        <ImageView
+            android:id="@+id/imageViewOsrodek"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/mapa" />
+
+        <Button
+            android:id="@+id/buttonZapiszSie"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Zapisz się!" />
+
+    </LinearLayout>
+
+</LinearLayout>
