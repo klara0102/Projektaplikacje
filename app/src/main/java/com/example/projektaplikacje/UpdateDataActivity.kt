@@ -12,8 +12,15 @@ import com.example.projektaplikacje.firebasee.User
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.launch
 
+/**
+ * Aktywność umożliwiająca użytkownikowi aktualizację danych profilowych.
+ *
+ * Dane są pobierane z Firestore po zalogowaniu i prezentowane w interfejsie graficznym.
+ * Po edycji dane mogą być ponownie zapisane w bazie.
+ */
 class UpdateDataActivity : AppCompatActivity() {
 
+    // Pola UI
     private lateinit var nameInput: EditText
     private lateinit var emailInput: EditText
     private lateinit var phoneInput: EditText
@@ -23,9 +30,14 @@ class UpdateDataActivity : AppCompatActivity() {
     private lateinit var cancelButton: Button
     private lateinit var profileImageView: ImageView
 
+    // Instancje Firebase
     private val auth = FirebaseAuth.getInstance()
     private val firestoreClass = FirestoreClass()
 
+    /**
+     * Wywoływana przy tworzeniu aktywności.
+     * Inicjalizuje interfejs i ładuje dane użytkownika z Firestore, jeśli jest zalogowany.
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_update_date)
@@ -51,6 +63,7 @@ class UpdateDataActivity : AppCompatActivity() {
             }
         }
 
+        // Zapisanie danych użytkownika po edycji
         submitButton.setOnClickListener {
             if (userId != null) {
                 lifecycleScope.launch {
@@ -61,22 +74,30 @@ class UpdateDataActivity : AppCompatActivity() {
             }
         }
 
+        // Powrót bez zapisu
         cancelButton.setOnClickListener {
             finish()
         }
     }
 
+    /**
+     * Inicjalizuje wszystkie elementy interfejsu użytkownika.
+     */
     private fun initializeUI() {
         nameInput = findViewById(R.id.nameInput)
         emailInput = findViewById(R.id.emailInput)
         phoneInput = findViewById(R.id.phoneInput)
         addressInput = findViewById(R.id.addressInput)
-        //  interestsInput = findViewById(R.id.interestsInput)
         submitButton = findViewById(R.id.submitButton)
         cancelButton = findViewById(R.id.cancelButton)
         profileImageView = findViewById(R.id.profileImageView)
     }
 
+    /**
+     * Wypełnia interfejs użytkownika danymi pobranymi z Firestore.
+     *
+     * @param user Obiekt użytkownika zawierający dane do wyświetlenia.
+     */
     private fun populateUI(user: User) {
         nameInput.setText(user.name ?: "")
         emailInput.setText(user.email)
@@ -101,6 +122,11 @@ class UpdateDataActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Aktualizuje dane użytkownika w Firestore na podstawie danych z formularza.
+     *
+     * @param userId Identyfikator użytkownika w Firebase.
+     */
     private suspend fun updateUserData(userId: String) {
         val addressParts = addressInput.text.toString().split(",").map { it.trim() }
         val addressMap = if (addressParts.size == 3) {
@@ -134,6 +160,11 @@ class UpdateDataActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Wyświetla krótką wiadomość Toast.
+     *
+     * @param message Treść wiadomości do wyświetlenia.
+     */
     private fun showToast(message: String) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }

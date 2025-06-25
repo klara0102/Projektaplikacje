@@ -15,10 +15,20 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.projektaplikacje.R
 
+/**
+ * Adapter RecyclerView do wyświetlania listy ośrodków medycznych.
+ * Obsługuje rozwijanie szczegółów oraz przycisk do zapisania się na wizytę.
+ *
+ * @param osrodkiList Lista obiektów [Osrodek] do wyświetlenia.
+ */
 class Adapter(private val osrodkiList: List<Osrodek>) : RecyclerView.Adapter<Adapter.OsrodekViewHolder>() {
 
+    /** Indeks aktualnie rozwiniętego elementu. -1 oznacza brak rozwinięcia. */
     private var expandedPosition = -1
 
+    /**
+     * ViewHolder reprezentujący pojedynczy widok ośrodka w liście.
+     */
     inner class OsrodekViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val tvNazwa: TextView = itemView.findViewById(R.id.tvNazwa)
         val tvAdres: TextView = itemView.findViewById(R.id.tvAdres)
@@ -29,13 +39,23 @@ class Adapter(private val osrodkiList: List<Osrodek>) : RecyclerView.Adapter<Ada
         val buttonZapiszSie: Button = itemView.findViewById(R.id.buttonZapiszSie)
     }
 
+    /**
+     * Tworzy nowy widok ViewHolder na podstawie layoutu XML.
+     */
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): OsrodekViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_osrodek, parent, false)
         return OsrodekViewHolder(view)
     }
 
+    /**
+     * Zwraca liczbę elementów w liście.
+     */
     override fun getItemCount(): Int = osrodkiList.size
 
+    /**
+     * Wypełnia widok danymi oraz obsługuje kliknięcia.
+     * Pokazuje szczegóły po kliknięciu w nazwę oraz wysyła powiadomienie po kliknięciu "Zapisz się".
+     */
     override fun onBindViewHolder(holder: OsrodekViewHolder, position: Int) {
         val osrodek = osrodkiList[position]
         holder.tvNazwa.text = osrodek.Ośrodek
@@ -43,22 +63,25 @@ class Adapter(private val osrodkiList: List<Osrodek>) : RecyclerView.Adapter<Ada
         holder.tvTelefon.text = osrodek.Telefon
         holder.tvOpis.text = osrodek.Schorzenie
 
+        // Pokazuje/ukrywa szczegóły
         val isExpanded = position == expandedPosition
         holder.expandableLayout.visibility = if (isExpanded) View.VISIBLE else View.GONE
 
         holder.imageViewOsrodek.setImageResource(R.drawable.mapa)
 
+        // Obsługa kliknięcia w nazwę – rozwija/zamyka szczegóły
         holder.tvNazwa.setOnClickListener {
             expandedPosition = if (isExpanded) -1 else position
             notifyDataSetChanged()
         }
 
+        // Obsługa kliknięcia przycisku "Zapisz się"
         holder.buttonZapiszSie.setOnClickListener {
             val context = holder.itemView.context
             val channelId = "visit_channel"
             val notificationId = System.currentTimeMillis().toInt()
 
-            // Android 13+ (TIRAMISU) – sprawdzenie uprawnień
+            // Android 13+ – sprawdzenie uprawnień
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 if (context.checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS)
                     != android.content.pm.PackageManager.PERMISSION_GRANTED
@@ -68,7 +91,7 @@ class Adapter(private val osrodkiList: List<Osrodek>) : RecyclerView.Adapter<Ada
                 }
             }
 
-            // Tworzenie kanału (Android 8+)
+            // Tworzenie kanału powiadomień (Android 8+)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 val channel = NotificationChannel(
                     channelId,
@@ -80,19 +103,19 @@ class Adapter(private val osrodkiList: List<Osrodek>) : RecyclerView.Adapter<Ada
                 notificationManager.createNotificationChannel(channel)
             }
 
-            // Zbuduj powiadomienie
+            // Budowanie powiadomienia
             val builder = NotificationCompat.Builder(context, channelId)
                 .setSmallIcon(R.drawable.ic_launcher_foreground)
                 .setContentTitle("Rejestracja zakończona")
                 .setContentText("Udało ci się zapisać na wizytę!")
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
 
-            // Wyślij po 1 minucie (60000 ms)
+            // Wysłanie powiadomienia po 60 sekundach (1 minuta)
             Handler(Looper.getMainLooper()).postDelayed({
                 NotificationManagerCompat.from(context).notify(notificationId, builder.build())
             }, 60_000)
 
-            // Pokazanie informacji natychmiast
+            // Informacja natychmiastowa (Toast)
             Toast.makeText(context, "Zapisano na badania w ${osrodek.Ośrodek}", Toast.LENGTH_SHORT).show()
         }
     }

@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    Szablon widoku pojedynczego ośrodka badawczego (element RecyclerView).
+    Zawiera nazwę, adres, telefon, schorzenia oraz rozwijaną sekcję z obrazem i przyciskiem.
+-->
 <androidx.cardview.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
@@ -8,12 +12,14 @@
     card_view:cardCornerRadius="8dp"
     card_view:cardElevation="4dp">
 
+    <!-- Główna sekcja pionowa z tekstami i sekcją rozwijaną -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:padding="16dp">
 
+        <!-- Nazwa ośrodka (duży, pogrubiony tekst) -->
         <TextView
             android:id="@+id/tvNazwa"
             android:layout_width="wrap_content"
@@ -22,6 +28,7 @@
             android:textStyle="bold"
             android:textSize="18sp" />
 
+        <!-- Adres ośrodka -->
         <TextView
             android:id="@+id/tvAdres"
             android:layout_width="wrap_content"
@@ -29,6 +36,7 @@
             android:text="Adres"
             android:textSize="14sp" />
 
+        <!-- Telefon kontaktowy -->
         <TextView
             android:id="@+id/tvTelefon"
             android:layout_width="wrap_content"
@@ -36,6 +44,7 @@
             android:text="Telefon"
             android:textSize="14sp" />
 
+        <!-- Opis schorzeń, które obsługuje ośrodek -->
         <TextView
             android:id="@+id/tvOpis"
             android:layout_width="wrap_content"
@@ -43,6 +52,7 @@
             android:text="Schorzenia"
             android:textSize="14sp" />
 
+        <!-- Rozwijana sekcja z obrazem i przyciskiem zapisu -->
         <LinearLayout
             android:id="@+id/expandableLayout"
             android:layout_width="match_parent"
@@ -51,6 +61,7 @@
             android:visibility="gone"
             android:paddingTop="8dp">
 
+            <!-- Obrazek reprezentujący lokalizację (np. mapa) -->
             <ImageView
                 android:id="@+id/imageViewOsrodek"
                 android:layout_width="match_parent"
@@ -58,6 +69,7 @@
                 android:scaleType="centerCrop"
                 android:src="@drawable/mapa" />
 
+            <!-- Przycisk umożliwiający zapisanie się na wizytę -->
             <Button
                 android:id="@+id/buttonZapiszSie"
                 android:layout_width="wrap_content"

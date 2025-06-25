@@ -21,8 +21,19 @@ import com.bumptech.glide.Glide
 import kotlinx.coroutines.launch
 import java.util.Calendar
 
+/**
+ * Główna aktywność aplikacji.
+ *
+ * Pozwala użytkownikowi na:
+ * - Wprowadzenie numeru telefonu i adresu
+ * - Wybranie zdjęcia profilowego
+ * - Ustawienie daty urodzenia i obliczenie wieku
+ * - Wybranie schorzeń w celu filtrowania ośrodków badawczych
+ * - Wyświetlenie i edycję danych pobranych z Firestore
+ */
 class MainActivity : AppCompatActivity() {
 
+    // UI
     private lateinit var profileImageView: ImageView
     private lateinit var phoneInput: EditText
     private lateinit var phoneDisplayText: TextView
@@ -36,13 +47,16 @@ class MainActivity : AppCompatActivity() {
     private lateinit var addressDisplayText: TextView
     private lateinit var openOsrodkiButton: Button
 
+    // Dane użytkownika
     private var userName: String? = null
     private var selectedDateOfBirth: String = ""
     private var selectedImageUri: Uri? = null
 
+    // Firebase
     private val auth = FirebaseAuth.getInstance()
     private val firestoreClass = FirestoreClass()
 
+    // Launcher do odświeżenia danych po powrocie z edycji
     private val updateDataLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == RESULT_OK) {
@@ -53,11 +67,16 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+    /**
+     * Inicjalizacja aktywności.
+     * Ustawia widoki, ładuje dane użytkownika oraz konfiguruje przyciski.
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         initializeUI()
+
         val userId = auth.currentUser?.uid
         if (userId != null) {
             loadUserData(userId)
@@ -113,6 +132,9 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Inicjalizuje wszystkie elementy interfejsu użytkownika.
+     */
     private fun initializeUI() {
         profileImageView = findViewById(R.id.profileImageView)
         phoneInput = findViewById(R.id.phoneInput)
@@ -130,6 +152,9 @@ class MainActivity : AppCompatActivity() {
         addressDisplayText.visibility = View.GONE
     }
 
+    /**
+     * Wyświetla dialog wyboru schorzeń w formie listy wielokrotnego wyboru.
+     */
     private fun showConditionsDialog() {
         val conditionsArray = allConditions.toTypedArray()
         val selectedItems = BooleanArray(allConditions.size) { selectedConditions.contains(allConditions[it]) }
@@ -153,6 +178,11 @@ class MainActivity : AppCompatActivity() {
         builder.show()
     }
 
+    /**
+     * Ładuje dane użytkownika z Firestore na podstawie ID.
+     *
+     * @param userId Identyfikator użytkownika w Firebase.
+     */
     private fun loadUserData(userId: String) {
         lifecycleScope.launch {
             try {
@@ -169,6 +199,9 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Zapisuje lub aktualizuje dane użytkownika w Firestore.
+     */
     private suspend fun saveUserData() {
         val userId = auth.currentUser?.uid ?: return
 
@@ -210,6 +243,11 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Wypełnia interfejs danymi użytkownika.
+     *
+     * @param user Obiekt użytkownika.
+     */
     private fun populateUI(user: User) {
         try {
             phoneDisplayText.text = "Twój numer telefonu: ${user.phoneNumber}"
@@ -256,10 +294,16 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Otwiera galerię do wyboru zdjęcia profilowego.
+     */
     private fun openGallery() {
         pickImageLauncher.launch("image/*")
     }
 
+    /**
+     * Launcher do pobrania obrazu z galerii.
+     */
     private val pickImageLauncher =
         registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
             uri?.let {
@@ -268,6 +312,9 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+    /**
+     * Wyświetla okno wyboru daty urodzenia i oblicza wiek.
+     */
     private fun openDatePicker() {
         val calendar = Calendar.getInstance()
         val year = calendar.get(Calendar.YEAR)
@@ -290,6 +337,12 @@ class MainActivity : AppCompatActivity() {
         datePickerDialog.show()
     }
 
+    /**
+     * Oblicza wiek na podstawie daty urodzenia w formacie YYYY-MM-DD.
+     *
+     * @param dateOfBirth Data urodzenia.
+     * @return Wiek w latach.
+     */
     private fun calculateAge(dateOfBirth: String): Int {
         val parts = dateOfBirth.split("-")
         if (parts.size != 3) return 0
@@ -310,10 +363,16 @@ class MainActivity : AppCompatActivity() {
         return age
     }
 
+    /**
+     * Lista dostępnych schorzeń do wyboru.
+     */
     private val allConditions = listOf(
         "Migrena", "Choroby serca", "Choroby oczu", "Atopowe zapalenie skóry",
         "RZS", "Padaczka", "Cukrzyca", "Choroby tarczycy"
     )
 
+    /**
+     * Zbiór wybranych przez użytkownika schorzeń (filtrowanie).
+     */
     private val selectedConditions = mutableSetOf<String>()
 }

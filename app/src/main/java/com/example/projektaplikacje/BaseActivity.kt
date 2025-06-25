@@ -5,9 +5,10 @@ import androidx.core.content.ContextCompat
 import com.google.android.material.snackbar.Snackbar
 
 /**
- * Base class for all activities in the application.
- * Provides utility methods shared across activities, such as displaying a Snackbar.
+ * Bazowa klasa dla wszystkich aktywności w aplikacji.
+ * Udostępnia metody pomocnicze współdzielone między aktywnościami, takie jak wyświetlanie Snackbarów.
  */
+
 open class BaseActivity : AppCompatActivity() {
 
     /**

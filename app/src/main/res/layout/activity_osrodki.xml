@@ -5,7 +5,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!-- Przycisk Wróć -->
+    <!--
+        Przycisk cofania do poprzedniego ekranu.
+        Umieszczony w lewym górnym rogu.
+        Kolor tła: pomarańczowy, tekst: biały.
+     -->
     <Button
         android:id="@+id/button_back"
         android:layout_width="wrap_content"
@@ -17,7 +21,10 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <!-- RecyclerView z listą ośrodków -->
+    <!--
+        RecyclerView wyświetlający listę ośrodków medycznych.
+        Zajmuje całą dostępną przestrzeń poniżej przycisku 'Wróć'.
+     -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewOsrodki"
         android:layout_width="0dp"

@@ -14,20 +14,31 @@ import android.content.Context
 import android.os.Build
 import android.content.pm.PackageManager
 
-
-
-
-
-
+/**
+ * Aktywność wyświetlająca listę ośrodków badawczych z bazy Firestore.
+ * Umożliwia filtrowanie wyników na podstawie przekazanych schorzeń oraz tworzy kanał powiadomień.
+ */
 class OsrodkiActivity : AppCompatActivity() {
 
+    /** Widok listy (RecyclerView) wyświetlający ośrodki */
     private lateinit var recyclerView: RecyclerView
+
+    /** Lista ośrodków do wyświetlenia */
     private val osrodkiList = mutableListOf<Osrodek>()
+
+    /** Adapter do obsługi RecyclerView */
     private lateinit var adapter: Adapter
 
+    /** Instancja bazy danych Firebase Firestore */
     private val db = FirebaseFirestore.getInstance()
+
+    /** Lista wybranych filtrów schorzeń przekazana z poprzedniej aktywności */
     private var selectedConditions: List<String>? = null
 
+    /**
+     * Metoda uruchamiana przy tworzeniu aktywności.
+     * Inicjalizuje widoki, sprawdza uprawnienia, ładuje dane i tworzy kanał powiadomień.
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_osrodki)
@@ -49,9 +60,6 @@ class OsrodkiActivity : AppCompatActivity() {
             notificationManager.createNotificationChannel(channel)
         }
 
-
-
-
         recyclerView = findViewById(R.id.recyclerViewOsrodki)
         recyclerView.layoutManager = LinearLayoutManager(this)
         adapter = Adapter(osrodkiList)
@@ -64,6 +72,10 @@ class OsrodkiActivity : AppCompatActivity() {
         loadOsrodkiFromFirestore()
     }
 
+    /**
+     * Pobiera dane o ośrodkach z kolekcji "Ośrodki" w Firestore.
+     * Filtrowanie wyników odbywa się na podstawie przekazanych schorzeń.
+     */
     private fun loadOsrodkiFromFirestore() {
         db.collection("Ośrodki")
             .get()
@@ -83,7 +95,11 @@ class OsrodkiActivity : AppCompatActivity() {
             }
     }
 
-
+    /**
+     * Tworzy kanał powiadomień dla systemów Android 8.0 i nowszych.
+     *
+     * @param context Kontekst używany do uzyskania dostępu do systemowego menedżera powiadomień.
+     */
     private fun createNotificationChannel(context: Context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val name = "Wizyty"
@@ -98,7 +114,12 @@ class OsrodkiActivity : AppCompatActivity() {
         }
     }
 
-
+    /**
+     * Sprawdza, czy dany ośrodek powinien być wyświetlony na podstawie wybranych filtrów.
+     *
+     * @param osrodek Obiekt ośrodka do sprawdzenia.
+     * @return true, jeśli ośrodek spełnia kryteria filtrowania lub brak filtrów; w przeciwnym razie false.
+     */
     private fun shouldIncludeOsrodek(osrodek: Osrodek): Boolean {
         val filters = selectedConditions
         if (filters.isNullOrEmpty()) return true
@@ -106,7 +127,11 @@ class OsrodkiActivity : AppCompatActivity() {
     }
 }
 
-// ⬇ DODAJ TUTAJ NA DOLE (poza klasą!)
+/**
+ * Globalna funkcja tworząca kanał powiadomień (duplikat z metody w klasie – warto usunąć jedną wersję).
+ *
+ * @param context Kontekst aplikacji.
+ */
 private fun createNotificationChannel(context: Context) {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
         val name = "Wizyty"
