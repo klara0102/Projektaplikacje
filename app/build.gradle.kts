@@ -40,6 +40,7 @@ android {
 
 dependencies {
     implementation(libs.androidx.core.ktx)
+    implementation("androidx.core:core:1.12.0") // <--- Dodano TO
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
     testImplementation(libs.junit)
@@ -53,5 +54,4 @@ dependencies {
     // Glide
     implementation("com.github.bumptech.glide:glide:4.16.0")
     annotationProcessor("com.github.bumptech.glide:compiler:4.16.0")
-
 }

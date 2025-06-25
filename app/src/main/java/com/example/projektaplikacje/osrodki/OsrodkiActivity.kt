@@ -8,6 +8,16 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.projektaplikacje.R
 import com.google.firebase.firestore.FirebaseFirestore
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.content.Context
+import android.os.Build
+import android.content.pm.PackageManager
+
+
+
+
+
 
 class OsrodkiActivity : AppCompatActivity() {
 
@@ -21,6 +31,26 @@ class OsrodkiActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_osrodki)
+
+        createNotificationChannel(this)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS)
+                != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(arrayOf(android.Manifest.permission.POST_NOTIFICATIONS), 1)
+            }
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = NotificationChannel(
+                "visit_channel",
+                "Kanał powiadomień wizyt",
+                NotificationManager.IMPORTANCE_DEFAULT
+            )
+            val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.createNotificationChannel(channel)
+        }
+
+
+
 
         recyclerView = findViewById(R.id.recyclerViewOsrodki)
         recyclerView.layoutManager = LinearLayoutManager(this)
@@ -53,9 +83,40 @@ class OsrodkiActivity : AppCompatActivity() {
             }
     }
 
+
+    private fun createNotificationChannel(context: Context) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val name = "Wizyty"
+            val descriptionText = "Powiadomienia o zapisach"
+            val importance = NotificationManager.IMPORTANCE_DEFAULT
+            val channel = NotificationChannel("visit_channel", name, importance).apply {
+                description = descriptionText
+            }
+            val notificationManager: NotificationManager =
+                context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.createNotificationChannel(channel)
+        }
+    }
+
+
     private fun shouldIncludeOsrodek(osrodek: Osrodek): Boolean {
         val filters = selectedConditions
         if (filters.isNullOrEmpty()) return true
         return osrodek.schorzenia.any { filters.contains(it) }
+    }
+}
+
+// ⬇ DODAJ TUTAJ NA DOLE (poza klasą!)
+private fun createNotificationChannel(context: Context) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        val name = "Wizyty"
+        val descriptionText = "Powiadomienia o zapisach"
+        val importance = NotificationManager.IMPORTANCE_DEFAULT
+        val channel = NotificationChannel("visit_channel", name, importance).apply {
+            description = descriptionText
+        }
+        val notificationManager: NotificationManager =
+            context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.createNotificationChannel(channel)
     }
 }

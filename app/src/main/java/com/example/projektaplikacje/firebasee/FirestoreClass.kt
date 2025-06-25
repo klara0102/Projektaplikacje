@@ -1,4 +1,5 @@
 package com.example.projektaplikacje.firebasee
+import android.util.Log
 
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
@@ -66,11 +67,26 @@ class FirestoreClass {
             // If there's nothing to update, exit early
             if (filteredData.isEmpty()) return
 
-            // Update the user document with the filtered data
+            val flatData = mutableMapOf<String, Any>()
+
+            for ((key, value) in filteredData) {
+                if (key == "address" && value is Map<*, *>) {
+                    for ((subKey, subValue) in value) {
+                        flatData["address.$subKey"] = subValue!!
+                    }
+                } else {
+                    flatData[key] = value!!
+                }
+            }
+
             mFireStore.collection("users")
                 .document(userId)
-                .set(filteredData)
-                .await() // Suspends until the operation is complete
+                .update(flatData)
+                .await()
+            Log.d("FirestoreUpdate", "Aktualizuję dane użytkownika: $flatData")
+
+
+
         } catch (e: Exception) {
             // Throw an exception with a descriptive message if an error occurs
             throw Exception("Error updating user data: ${e.message}")

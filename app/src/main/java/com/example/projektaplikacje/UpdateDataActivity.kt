@@ -1,25 +1,19 @@
 package com.example.projektaplikacje
-import com.example.projektaplikacje.firebasee.User
-import com.example.projektaplikacje.firebasee.FirestoreClass
-import com.google.firebase.auth.FirebaseAuth
-import android.util.Log
+
 import android.net.Uri
 import android.os.Bundle
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.Toast
+import android.util.Log
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
-import kotlinx.coroutines.launch
 import com.bumptech.glide.Glide
+import com.example.projektaplikacje.firebasee.FirestoreClass
+import com.example.projektaplikacje.firebasee.User
+import com.google.firebase.auth.FirebaseAuth
+import kotlinx.coroutines.launch
 
-/**
- * Aktywność do aktualizacji danych użytkownika w bazie danych Firestore.
- */
 class UpdateDataActivity : AppCompatActivity() {
 
-    // Komponenty UI do zbierania i wyświetlania danych użytkownika
     private lateinit var nameInput: EditText
     private lateinit var emailInput: EditText
     private lateinit var phoneInput: EditText
@@ -29,7 +23,6 @@ class UpdateDataActivity : AppCompatActivity() {
     private lateinit var cancelButton: Button
     private lateinit var profileImageView: ImageView
 
-    // Instancje Firebase Authentication i klasy Firestore
     private val auth = FirebaseAuth.getInstance()
     private val firestoreClass = FirestoreClass()
 
@@ -37,92 +30,77 @@ class UpdateDataActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_update_date)
 
-        // Inicjalizacja komponentów UI
         initializeUI()
 
         val userId = auth.currentUser?.uid
 
         if (userId != null) {
-            // Asynchroniczne ładowanie danych użytkownika z FirestoreClass
             lifecycleScope.launch {
                 try {
-                    // Pobierz dane użytkownika z Firestore
-                    val data = firestoreClass.loadUserData(userId) // Funkcja zawieszona
+                    val data = firestoreClass.loadUserData(userId)
                     if (data != null) {
-                        val user = User.fromMap(data) // Konwertuj dane Firestore do obiektu User
-                        populateUI(user) // Wypełnij UI danymi użytkownika
+                        val user = User.fromMap(data)
+                        populateUI(user)
                     } else {
-                        Toast.makeText(this@UpdateDataActivity, "Brak danych użytkownika.", Toast.LENGTH_SHORT).show()
+                        showToast("Brak danych użytkownika.")
                     }
                 } catch (e: Exception) {
-                    Toast.makeText(this@UpdateDataActivity, "Błąd ładowania danych: ${e.message}", Toast.LENGTH_SHORT).show()
+                    showToast("Błąd ładowania danych: ${e.message}")
+                    Log.e("UpdateDataActivity", "Load error", e)
                 }
             }
         }
 
-        // Obsługa kliknięcia przycisku zatwierdzenia – zapis zaktualizowanych danych
         submitButton.setOnClickListener {
             if (userId != null) {
                 lifecycleScope.launch {
-                    updateUserData(userId) // Zapisz dane asynchronicznie
+                    updateUserData(userId)
                 }
             } else {
-                Toast.makeText(this, "Użytkownik niezalogowany.", Toast.LENGTH_SHORT).show()
+                showToast("Użytkownik niezalogowany.")
             }
         }
 
-        // Obsługa kliknięcia przycisku anulowania – wyjdź bez zapisu
         cancelButton.setOnClickListener {
-            finish() // Zamknij aktywność bez zmian
+            finish()
         }
     }
 
-    /**
-     * Inicjalizuje komponenty UI poprzez powiązanie ich z widokami z layoutu.
-     */
     private fun initializeUI() {
         nameInput = findViewById(R.id.nameInput)
         emailInput = findViewById(R.id.emailInput)
         phoneInput = findViewById(R.id.phoneInput)
         addressInput = findViewById(R.id.addressInput)
+        //  interestsInput = findViewById(R.id.interestsInput)
         submitButton = findViewById(R.id.submitButton)
         cancelButton = findViewById(R.id.cancelButton)
         profileImageView = findViewById(R.id.profileImageView)
     }
 
-    /**
-     * Wypełnia interfejs użytkownika danymi.
-     *
-     * @param user Obiekt User zawierający dane do wyświetlenia.
-     */
     private fun populateUI(user: User) {
-        nameInput.setText(user.name ?: "") // Ustaw imię użytkownika w polu EditText
-        emailInput.setText(user.email) // Ustaw e-mail użytkownika
-        phoneInput.setText(user.phoneNumber) // Ustaw numer telefonu
+        nameInput.setText(user.name ?: "")
+        emailInput.setText(user.email)
+        phoneInput.setText(user.phoneNumber)
 
-        // Konwertuj mapę adresu na pojedynczy ciąg i wyświetl
-        val address = user.address.values.joinToString(", ")
+        val address = listOfNotNull(
+            user.address["city"],
+            user.address["street"],
+            user.address["postcode"]
+        ).joinToString(", ")
         addressInput.setText(address)
 
-        // Konwertuj listę zainteresowań na ciąg rozdzielany przecinkami i wyświetl
         interestsInput.setText(user.interests.joinToString(", "))
 
-        // Załaduj zdjęcie profilowe przy użyciu Glide z obrazem zastępczym
         if (user.profilePictureUrl.isNotEmpty()) {
             Glide.with(this)
                 .load(Uri.parse(user.profilePictureUrl))
-                .placeholder(R.drawable.obrazpng) // Obraz zastępczy podczas ładowania
+                .placeholder(R.drawable.obrazpng)
                 .into(profileImageView)
         } else {
-            profileImageView.setImageResource(R.drawable.obrazpng) // Domyślny obraz, jeśli brak zdjęcia profilowego
+            profileImageView.setImageResource(R.drawable.obrazpng)
         }
     }
 
-    /**
-     * Zbiera zaktualizowane dane z UI i zapisuje je w Firestore.
-     *
-     * @param userId ID użytkownika, którego dane są aktualizowane.
-     */
     private suspend fun updateUserData(userId: String) {
         val addressParts = addressInput.text.toString().split(",").map { it.trim() }
         val addressMap = if (addressParts.size == 3) {
@@ -132,7 +110,7 @@ class UpdateDataActivity : AppCompatActivity() {
                 "postcode" to addressParts[2]
             )
         } else {
-            mapOf()
+            emptyMap()
         }
 
         val updatedData = mapOf(
@@ -140,19 +118,23 @@ class UpdateDataActivity : AppCompatActivity() {
             "email" to emailInput.text.toString(),
             "phoneNumber" to phoneInput.text.toString(),
             "address" to addressMap,
-            "interests" to interestsInput.text.toString().split(",").map { it.trim() }
+            "interests" to interestsInput.text.toString().split(",").map { it.trim() }.filter { it.isNotEmpty() }
         )
 
+        Log.d("UpdateDataActivity", "Aktualizacja z danymi: $updatedData")
+
         try {
-            Log.d("UpdateDataActivity", "Próba aktualizacji danych: $updatedData")
             firestoreClass.updateUserData(userId, updatedData)
-            Log.d("UpdateDataActivity", "Aktualizacja zakończona sukcesem")
-            Toast.makeText(this, "Dane zaktualizowane pomyślnie!", Toast.LENGTH_SHORT).show()
+            showToast("Dane zaktualizowane pomyślnie!")
             setResult(RESULT_OK)
             finish()
         } catch (e: Exception) {
-            Log.e("UpdateDataActivity", "Błąd aktualizacji: ${e.message}")
-            Toast.makeText(this, "Błąd aktualizacji danych: ${e.message}", Toast.LENGTH_SHORT).show()
+            Log.e("UpdateDataActivity", "Błąd aktualizacji danych", e)
+            showToast("Błąd aktualizacji danych: ${e.message}")
         }
+    }
+
+    private fun showToast(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 }

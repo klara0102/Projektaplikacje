@@ -1,4 +1,5 @@
 package com.example.projektaplikacje
+
 import com.example.projektaplikacje.firebasee.User
 import com.example.projektaplikacje.firebasee.FirestoreClass
 import com.example.projektaplikacje.osrodki.OsrodkiActivity
@@ -10,20 +11,16 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
-
 import android.widget.TextView
 import android.view.View
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
+import com.bumptech.glide.Glide
 import kotlinx.coroutines.launch
 import java.util.Calendar
-import com.bumptech.glide.Glide
 
-/**
- * Główna aktywność aplikacji, gdzie wyświetlane i zarządzane są dane użytkownika.
- */
 class MainActivity : AppCompatActivity() {
 
     private lateinit var profileImageView: ImageView
@@ -37,21 +34,21 @@ class MainActivity : AppCompatActivity() {
     private lateinit var dobButton: Button
     private lateinit var ageText: TextView
     private lateinit var addressDisplayText: TextView
-    private lateinit var openOsrodkiButton: Button  // <-- nowy przycisk
+    private lateinit var openOsrodkiButton: Button
 
     private var userName: String? = null
     private var selectedDateOfBirth: String = ""
     private var selectedImageUri: Uri? = null
 
-    private val auth = FirebaseAuth.getInstance() // Instancja Firebase Authentication
-    private val firestoreClass = FirestoreClass() // Pomocnicza klasa do interakcji z Firestore
+    private val auth = FirebaseAuth.getInstance()
+    private val firestoreClass = FirestoreClass()
 
     private val updateDataLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == RESULT_OK) {
                 val userId = auth.currentUser?.uid
                 if (userId != null) {
-                    loadUserData(userId) // Ponowne załadowanie danych po aktualizacji
+                    loadUserData(userId)
                 }
             }
         }
@@ -65,26 +62,28 @@ class MainActivity : AppCompatActivity() {
         if (userId != null) {
             loadUserData(userId)
         }
+
         selectConditionsButton.setOnClickListener {
             showConditionsDialog()
         }
+
         phoneDisplayText.visibility = View.GONE
 
         submitButton.setOnClickListener {
-
             val phone = phoneInput.text.toString().trim()
             val address = addressInput.text.toString().trim()
+
             if (phone.isEmpty() && address.isEmpty()) {
                 Toast.makeText(this, "Proszę wpisać numer telefonu lub adres", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
-            // Ukryj pola jeśli wypełnione
             if (phone.isNotEmpty()) {
                 phoneInput.visibility = View.GONE
                 phoneDisplayText.visibility = View.VISIBLE
                 phoneDisplayText.text = "Twój numer telefonu: $phone"
             }
+
             if (address.isNotEmpty()) {
                 addressInput.visibility = View.GONE
                 addressDisplayText.visibility = View.VISIBLE
@@ -94,6 +93,7 @@ class MainActivity : AppCompatActivity() {
             lifecycleScope.launch {
                 saveUserData()
             }
+
             submitButton.visibility = View.GONE
         }
 
@@ -108,13 +108,28 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        // **Tutaj dodaj wywołanie openDatePicker przy kliknięciu dobButton**
         dobButton.setOnClickListener {
             openDatePicker()
         }
-
-
     }
+
+    private fun initializeUI() {
+        profileImageView = findViewById(R.id.profileImageView)
+        phoneInput = findViewById(R.id.phoneInput)
+        phoneDisplayText = findViewById(R.id.phoneDisplayText)
+        addressInput = findViewById(R.id.addressInput)
+        updateButton = findViewById(R.id.updateDataButton)
+        addressDisplayText = findViewById(R.id.addressDisplayText)
+        submitButton = findViewById(R.id.submitButton)
+        selectImageButton = findViewById(R.id.selectImageButton)
+        dobButton = findViewById(R.id.dobButton)
+        ageText = findViewById(R.id.ageText)
+        openOsrodkiButton = findViewById(R.id.buttonOpenOsrodki)
+        selectConditionsButton = findViewById(R.id.buttonSelectConditions)
+        phoneDisplayText.visibility = View.GONE
+        addressDisplayText.visibility = View.GONE
+    }
+
     private fun showConditionsDialog() {
         val conditionsArray = allConditions.toTypedArray()
         val selectedItems = BooleanArray(allConditions.size) { selectedConditions.contains(allConditions[it]) }
@@ -137,59 +152,26 @@ class MainActivity : AppCompatActivity() {
         }
         builder.show()
     }
-    /**
-     * Ładuje dane użytkownika z Firestore i uzupełnia UI.
-     *
-     * @param userId Unikalny identyfikator użytkownika, którego dane są ładowane.
-     */
+
     private fun loadUserData(userId: String) {
         lifecycleScope.launch {
             try {
-                // Pobierz dane użytkownika z Firestore
                 val data = firestoreClass.loadUserData(userId)
                 if (data != null) {
-                    val user = User.fromMap(data) // Konwersja danych Firestore do obiektu User
-                    populateUI(user) // Uzupełnienie UI danymi użytkownika
+                    val user = User.fromMap(data)
+                    populateUI(user)
                 } else {
-                    Toast.makeText(
-                        this@MainActivity,
-                        "Brak danych użytkownika.",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    Toast.makeText(this@MainActivity, "Brak danych użytkownika.", Toast.LENGTH_SHORT).show()
                 }
             } catch (e: Exception) {
-                Toast.makeText(
-                    this@MainActivity,
-                    "Błąd ładowania danych: ${e.message}",
-                    Toast.LENGTH_SHORT
-                ).show()
+                Toast.makeText(this@MainActivity, "Błąd ładowania danych: ${e.message}", Toast.LENGTH_SHORT).show()
             }
         }
     }
-    private fun initializeUI() {
-        profileImageView = findViewById(R.id.profileImageView)
-        phoneInput = findViewById(R.id.phoneInput)
-        phoneDisplayText = findViewById(R.id.phoneDisplayText)
-        addressInput = findViewById(R.id.addressInput)
-        updateButton = findViewById(R.id.updateDataButton)
-        addressDisplayText = findViewById(R.id.addressDisplayText)
-        submitButton = findViewById(R.id.submitButton)
-        selectImageButton = findViewById(R.id.selectImageButton)
-        dobButton = findViewById(R.id.dobButton)
-        ageText = findViewById(R.id.ageText)
-        openOsrodkiButton = findViewById(R.id.buttonOpenOsrodki)
-        selectConditionsButton = findViewById(R.id.buttonSelectConditions)
-        phoneDisplayText.visibility = View.GONE
-        addressDisplayText.visibility = View.GONE
 
-    }
-    /**
-     * Zapisuje dane użytkownika do Firestore.
-     */
     private suspend fun saveUserData() {
         val userId = auth.currentUser?.uid ?: return
 
-        // Parsowanie adresu na zmapowaną strukturę
         val addressParts = addressInput.text.toString().split(",").map { it.trim() }
         val addressMap = if (addressParts.size == 3) {
             mapOf(
@@ -201,9 +183,6 @@ class MainActivity : AppCompatActivity() {
             mapOf()
         }
 
-
-
-        // Pobierz istniejące dane, aby uzupełnić brakujące pola
         val data = firestoreClass.loadUserData(userId)
         if (data != null) {
             userName = User.fromMap(data).name.toString()
@@ -212,7 +191,6 @@ class MainActivity : AppCompatActivity() {
             selectedDateOfBirth = User.fromMap(data).dateOfBirth
         }
 
-        // Utwórz nowy obiekt User z aktualnymi danymi
         val user = User(
             email = FirebaseAuth.getInstance().currentUser?.email.toString(),
             name = userName,
@@ -220,57 +198,43 @@ class MainActivity : AppCompatActivity() {
             phoneNumber = phoneInput.text.toString(),
             dateOfBirth = selectedDateOfBirth,
             address = addressMap,
-
             profilePictureUrl = selectedImageUri?.toString()
                 ?: User.fromMap(data!!).profilePictureUrl
         )
 
-        // Zapisz dane użytkownika do Firestore
         try {
             firestoreClass.registerOrUpdateUser(user)
             Toast.makeText(this@MainActivity, "Dane zapisane pomyślnie!", Toast.LENGTH_SHORT).show()
         } catch (e: Exception) {
-            Toast.makeText(
-                this@MainActivity,
-                "Błąd zapisu danych: ${e.message}",
-                Toast.LENGTH_SHORT
-            ).show()
+            Toast.makeText(this@MainActivity, "Błąd zapisu danych: ${e.message}", Toast.LENGTH_SHORT).show()
         }
     }
 
-    /**
-     * Uzupełnia interfejs danymi użytkownika.
-     *
-     * @param user Obiekt użytkownika z danymi do wyświetlenia.
-     */
     private fun populateUI(user: User) {
         try {
-
+            phoneDisplayText.text = "Twój numer telefonu: ${user.phoneNumber}"
             if (!user.phoneNumber.isNullOrEmpty()) {
                 phoneInput.visibility = View.GONE
                 phoneDisplayText.visibility = View.VISIBLE
-                phoneDisplayText.text = "Twój numer telefonu: ${user.phoneNumber}"
             } else {
                 phoneInput.visibility = View.VISIBLE
                 phoneDisplayText.visibility = View.GONE
             }
 
-            // Adres
             val city = user.address["city"] ?: ""
             val street = user.address["street"] ?: ""
             val postcode = user.address["postcode"] ?: ""
             val address = listOf(city, street, postcode).filter { it.isNotEmpty() }.joinToString(", ")
 
+            addressDisplayText.text = "Adres: $address"
             if (address.isNotEmpty()) {
                 addressInput.visibility = View.GONE
                 addressDisplayText.visibility = View.VISIBLE
-                addressDisplayText.text = "Adres: $address"
             } else {
                 addressInput.visibility = View.VISIBLE
                 addressDisplayText.visibility = View.GONE
             }
 
-            // Ustaw datę urodzenia i oblicz/wyswietl wiek
             if (user.dateOfBirth.isNotEmpty()) {
                 val age = calculateAge(user.dateOfBirth)
                 ageText.text = "Wiek: $age"
@@ -278,23 +242,20 @@ class MainActivity : AppCompatActivity() {
                 ageText.text = ""
             }
 
-            // Załaduj zdjęcie profilowe do ImageView za pomocą Glide
             if (user.profilePictureUrl.isNotEmpty()) {
                 Glide.with(this)
                     .load(Uri.parse(user.profilePictureUrl))
-                    .placeholder(R.drawable.obrazpng) // Obraz zastępczy
+                    .placeholder(R.drawable.obrazpng)
                     .into(profileImageView)
             } else {
-                profileImageView.setImageResource(R.drawable.obrazpng) // Domyślny obraz
+                profileImageView.setImageResource(R.drawable.obrazpng)
             }
+
         } catch (e: Exception) {
             Toast.makeText(this, "Błąd wyświetlania danych użytkownika.", Toast.LENGTH_SHORT).show()
         }
     }
 
-    /**
-     * Otwiera galerię w celu wyboru zdjęcia profilowego.
-     */
     private fun openGallery() {
         pickImageLauncher.launch("image/*")
     }
@@ -303,13 +264,10 @@ class MainActivity : AppCompatActivity() {
         registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
             uri?.let {
                 selectedImageUri = it
-                profileImageView.setImageURI(it) // Wyświetl wybrany obraz
+                profileImageView.setImageURI(it)
             }
         }
 
-    /**
-     * Otwiera okno DatePicker do wyboru daty urodzenia.
-     */
     private fun openDatePicker() {
         val calendar = Calendar.getInstance()
         val year = calendar.get(Calendar.YEAR)
@@ -320,8 +278,6 @@ class MainActivity : AppCompatActivity() {
             this,
             { _, selectedYear, selectedMonth, selectedDay ->
                 selectedDateOfBirth = "$selectedYear-${selectedMonth + 1}-$selectedDay"
-
-                // Oblicz i wyświetl wiek
                 val age = calculateAge(selectedDateOfBirth)
                 ageText.text = "Wiek: $age"
             },
@@ -330,18 +286,10 @@ class MainActivity : AppCompatActivity() {
             day
         )
 
-        // Ograniczenie wyboru daty do przeszłości
         datePickerDialog.datePicker.maxDate = calendar.timeInMillis
-
         datePickerDialog.show()
     }
 
-    /**
-     * Oblicza wiek na podstawie daty urodzenia.
-     *
-     * @param dateOfBirth Data urodzenia w formacie "YYYY-MM-DD".
-     * @return Obliczony wiek.
-     */
     private fun calculateAge(dateOfBirth: String): Int {
         val parts = dateOfBirth.split("-")
         if (parts.size != 3) return 0
@@ -353,7 +301,6 @@ class MainActivity : AppCompatActivity() {
         val today = Calendar.getInstance()
         var age = today.get(Calendar.YEAR) - birthYear
 
-        // Korekta wieku, jeśli aktualna data jest przed urodzinami
         if (today.get(Calendar.MONTH) < birthMonth - 1 ||
             (today.get(Calendar.MONTH) == birthMonth - 1 && today.get(Calendar.DAY_OF_MONTH) < birthDay)
         ) {
@@ -362,11 +309,11 @@ class MainActivity : AppCompatActivity() {
 
         return age
     }
+
     private val allConditions = listOf(
         "Migrena", "Choroby serca", "Choroby oczu", "Atopowe zapalenie skóry",
         "RZS", "Padaczka", "Cukrzyca", "Choroby tarczycy"
     )
+
     private val selectedConditions = mutableSetOf<String>()
-
-
-    }
+}
